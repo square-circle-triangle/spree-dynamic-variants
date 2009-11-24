@@ -99,6 +99,12 @@ class DynamicVariantsExtension < Spree::Extension
       end
     end
 
+    ProductsController.class_eval do
+
+      helper :dynamic_variants
+
+    end
+
   end
 
 end

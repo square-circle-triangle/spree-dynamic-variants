@@ -16,7 +16,7 @@
       <% @product.option_types.each do |ot| %>
         <li>
           <%= label_tag "product-options-#{@product.id}-#{ot.id}", ot.presentation %><br />
-          <%= select_tag "variant_options[#{@product.id}][#{ot.id}]",  options_from_collection_for_select(ot.option_values, :id, :presentation), { :id => "product-options-#{@product.id}-#{ot.id}" } %>
+          <%= select_tag "variant_options[#{@product.id}][#{ot.id}]", option_values_for_select(ot), { :id => "product-options-#{@product.id}-#{ot.id}" } %>
         </li>
       <% end %>
   </div>
