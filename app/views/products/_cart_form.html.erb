@@ -1,7 +1,14 @@
+<% content_for :head do %>
+  <% javascript_tag do %>
+    update_configuration_price_url = "<%= escape_javascript update_configuration_price_product_path(@product) %>";
+  <% end %>
+  <%= javascript_include_tag "product-options" %>
+<% end %>
+
 <% form_for :order, :url => orders_url do |f| %>
 
   <% if product_price(@product) %>
-  <p class="prices">
+  <p class="prices" id="master-price">
     <%= t("price") %>
     <br />
     <span class="price selling"><%= product_price(@product) %></span>
@@ -16,7 +23,7 @@
       <% @product.option_types.each do |ot| %>
         <li>
           <%= label_tag "product-options-#{@product.id}-#{ot.id}", ot.presentation %><br />
-          <%= select_tag "variant_options[#{@product.id}][#{ot.id}]", option_values_for_select(ot), { :id => "product-options-#{@product.id}-#{ot.id}" } %>
+          <%= select_tag "variant_options[#{@product.id}][#{ot.id}]", option_values_for_select(ot), { :id => "product-options-#{@product.id}-#{ot.id}", :class => "affects-price" } %>
         </li>
       <% end %>
   </div>

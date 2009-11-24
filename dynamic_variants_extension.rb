@@ -22,6 +22,10 @@ class DynamicVariantsExtension < Spree::Extension
         option_values.map{ |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.join(', ')
       end
 
+      def price_with_options(option_values)
+        self.price + option_values.sum(&:price)
+      end
+
     end
 
     Order.class_eval do
@@ -35,12 +39,13 @@ class DynamicVariantsExtension < Spree::Extension
           current_item.quantity = (current_item.quantity + quantity) if quantity > 1
           current_item.save
         else
-          current_item = LineItem.new(:quantity => quantity)
-          current_item.variant = variant
-          current_item.price   = variant.price + option_values.sum(&:price)
-
+          current_item               = LineItem.new(:quantity => quantity)
+          current_item.variant       = variant
+          current_item.price         = variant.price_with_options(option_values)
           current_item.option_values = option_values
+
           return nil unless current_item.save
+
           self.line_items << current_item
         end
 
@@ -102,6 +107,25 @@ class DynamicVariantsExtension < Spree::Extension
     ProductsController.class_eval do
 
       helper :dynamic_variants
+
+      def update_configuration_price
+        @new_price = nil
+
+        params[:variants].each do |variant_id, quantity|
+          variant = Variant.find(variant_id)
+
+          quantity = quantity.to_i
+
+          option_values = variant.product.option_types.inject([]) do |selected, ot|
+            ov = ot.option_values.find(params[:variant_options][variant_id][ot.id.to_s]) if params[:variant_options][variant_id][ot.id.to_s]
+            selected << ov if ov
+          end if params[:variant_options] && params[:variant_options][variant_id]
+
+          @new_price = variant.price_with_options(option_values)
+        end if params[:variants]
+
+        render :action => 'update_configuration_price', :layout => false
+      end
 
     end
 

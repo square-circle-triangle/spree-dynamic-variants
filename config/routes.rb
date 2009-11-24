@@ -1,5 +1,1 @@
-# Put your extension routes here.
-
-# map.namespace :admin do |admin|
-#   admin.resources :whatever
-# end  
+map.resources :products, :member => { :update_configuration_price => :get }
