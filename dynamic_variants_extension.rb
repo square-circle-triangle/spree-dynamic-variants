@@ -92,6 +92,7 @@ class DynamicVariantsExtension < Spree::Extension
           option_values = variant.product.option_types.inject([]) do |selected, ot|
             ov = ot.option_values.find(params[:variant_options][variant_id][ot.id.to_s]) if params[:variant_options][variant_id][ot.id.to_s]
             selected << ov if ov
+            selected
           end if params[:variant_options] && params[:variant_options][variant_id]
 
           @order.add_variant(variant, quantity, option_values) if quantity > 0
@@ -119,6 +120,7 @@ class DynamicVariantsExtension < Spree::Extension
           option_values = variant.product.option_types.inject([]) do |selected, ot|
             ov = ot.option_values.find(params[:variant_options][variant_id][ot.id.to_s]) if params[:variant_options][variant_id][ot.id.to_s]
             selected << ov if ov
+            selected
           end if params[:variant_options] && params[:variant_options][variant_id]
 
           @new_price = variant.price_with_options(option_values)

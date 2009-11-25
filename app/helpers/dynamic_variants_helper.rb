@@ -2,6 +2,11 @@ module DynamicVariantsHelper
 
   def option_values_for_select(option_type)
     options_for_select(option_type.option_values.collect{ |ov| ["#{ov.presentation} #{format_price_difference(ov.price)}", ov.id] })
+    options_for_select(option_type.option_values.collect{ |ov| [option_value_format(ov), ov.id] })
+  end
+
+  def option_value_format(option_value)
+    "#{option_value.presentation} #{format_price_difference(option_value.price)}"
   end
 
   def format_price_difference(value)
