@@ -131,6 +131,40 @@ class DynamicVariantsExtension < Spree::Extension
 
     end
 
+    Product.class_eval do
+
+      has_many :product_option_types, :dependent => :destroy do
+        def static(*args)
+          with_scope(:find => { :conditions => {"option_types.dynamic" => false }, :include => :option_type }) do
+            all(*args)
+          end
+        end
+
+        def dynamic(*args)
+          with_scope(:find => { :conditions => {"option_types.dynamic" => true }, :include => :option_type }) do
+            all(*args)
+          end
+        end
+      end
+
+      alias :options :product_option_types
+
+      has_many :option_types, :through => :product_option_types do
+        def static(*args)
+          with_scope(:find => { :conditions => { :dynamic => false }, :include => :option_values }) do
+            all(*args)
+          end
+        end
+
+        def dynamic(*args)
+          with_scope(:find => { :conditions => { :dynamic => true }, :include => :option_values }) do
+            all(*args)
+          end
+        end
+      end
+
+    end
+
   end
 
 end
